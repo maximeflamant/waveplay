@@ -1,0 +1,64 @@
+"raop_play"
+
+This is originally a ported version of "JustePort" which is programed
+by Jon Lech Johansen.  I've rewritten it in C code using openssl, so
+this can run without mono.
+
+This program works under aexcl_play which makes GUI.
+
+Thomas Butter gave me information how to play pcm data, and now this
+can play wave files.
+
+The original information about alac format from alac_decoder
+by David Hamilton.  http://craz.net/programs/itunes/alac.html
+
+mp3, ogg, aac data are supported by using commandline program:
+"mpg321","ogg123" and "faad".
+
+
+TO COMPILE:
+Make sure you have libssl library and header file.
+Then just run "make", you'll get an executable "raop_play".
+No installer is there, If you want to put into a executable path, you
+need to manually copy it.
+
+TO PLAY:
+$ raop_play [--port port_number] [--vol volume(0-100)] [-i] AirporExpree_IP [ filename ]
+
+Supported filetypes:
+.pcm .wav, .mp3, .m4a, .ogg, .aac, .pls, http://*
+  .pls is playlist which includes other type of file as a list.
+  if filename start with "http://", which is plyed by mpg321.  Only mp3 type streams can be played
+  files without extension are played as raw pcm data file, which can be fifo or file device.
+
+
+if -i option is used, the program stops after making a connection, and
+wait a command from stdin.
+
+INTERACTIVE MODE COMMAND:
+
+  play [m4a_filename] # play-after-pause doesn't need m4a_filename
+  pause
+  stop
+  quit
+  volume VALUE # VALUE is 0 to 100
+
+INTERACTIVE MODE CONSOLE PRINTOUT:
+  connected # when it gets a connection with the host
+  done # when one file play finished
+  error # non fatal error. if it is fatal, disconnect and quit the program.
+
+
+
+Original "JustePort" by Jon Lech Johansen
+http://nanocrew.net/software/
+
+base64.c, base64.h
+are picked up from "krb-1.2.2" by Kungliga Tekniska HNvgskolan 
+
+aes.c, aes.h
+are picked up from "sbd-1.31" by Michel Blomgren
+
+
+27 July, 2005
+Shiro Ninomiya <shiron@snino.com>

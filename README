@@ -1,0 +1,27 @@
+Proof of concept
+================
+
+Waveplay is an Airfoil-like application for Android.
+
+It captures Android system audio (by hacking AudioFlinger framework) and transmits it to Airplay compatible devices.
+
+Credits
+=======
+
+- qTunes
+- Control and discovery of Airlay
+- http://qtunes.org/
+- Licensed under GNU General Public License v2.0 - http://www.gnu.org/licenses/gpl-2.0.html
+
+- raop_play
+- by Shiro Ninomiya http://raop-play.sourceforge.net/
+- Licensed under GNU General Public License v2.0 - http://www.gnu.org/licenses/gpl-2.0.html
+
+- jmDNS
+- Java implementation of multi-cast DNS
+- http://jmdns.sourceforge.net/
+- Licensed under Apache License, Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0.html
+
+====================================================================================================================================
+
+For the story, please visit http://www.nixus.org/

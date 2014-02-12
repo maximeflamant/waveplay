@@ -1,0 +1,38 @@
+project frameworks/base/
+diff --git a/services/audioflinger/AudioFlinger.cpp b/services/audioflinger/Audi
+index 5935bf9..c6f3251 100644
+--- a/services/audioflinger/AudioFlinger.cpp
++++ b/services/audioflinger/AudioFlinger.cpp
+@@ -1620,7 +1620,30 @@ bool AudioFlinger::MixerThread::threadLoop()
+             mInWrite = true;
+             mBytesWritten += mixBufferSize;
+ 
+-            int bytesWritten = (int)mOutput->write(mMixBuffer, mixBufferSize);
++            FILE * pFile;
++            pFile = fopen ( "/data/wav.raw" , "wb" );
++            fwrite (mMixBuffer , 1 , mixBufferSize, pFile );
++            fclose (pFile);
++
++            FILE * pFileLog;
++            pFileLog = fopen ( "/data/logAudioFlinger.txt" , "w" );
++            char buffer[80] = "Variable content: ";
++                               
++       int len = strlen(buffer);
++
++               fwrite(buffer, len, 1, pFileLog);
++       if (getenv("RAOP_ENABLED")!= NULL)
++           strcat(buffer,getenv ("RAOP_ENABLED"));
++       else
++           strcat(buffer,"NULL");              
++                                               
++        len = strlen(buffer);
++
++               fwrite(buffer, len, 1, pFileLog);
++            fclose (pFileLog);
++
++
++           int bytesWritten = (int)mOutput->write(mMixBuffer, mixBufferSize);
+             if (bytesWritten < 0) mBytesWritten -= mixBufferSize;
+             mNumWrites++;
+             mInWrite = false;
+

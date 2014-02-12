@@ -1,0 +1,103 @@
+94,98d93
+< #include <arpa/inet.h>
+< #include <sys/socket.h>
+< #include <sys/types.h>
+< #include <netinet/in.h>
+< 
+116,126d110
+< 
+< FILE * dumpSwitchFile =  fopen ( "/data/raop_switch" , "r+" );
+< 
+< int dumpSocket  = -1;
+< int dumpSocketReady = -1;
+< int dumpSocketWatchDog = 0;
+< struct sockaddr_in dumpSocketAddr;
+< 
+< int dumpSwitch = 0;
+< 
+< 
+206,212d189
+<     //Disable caching for raop switch file
+<     if (dumpSwitchFile != NULL)
+<         setbuf(dumpSwitchFile,NULL);
+<     else
+<         ALOGI("Could not open %s", "dumpSwitchFile");
+< 
+< 
+276,288d252
+< 
+< 	/* Socket audio dump */
+< 	/* TODO: add compiler directive */
+<     memset(&dumpSocketAddr, '0', sizeof(dumpSocketAddr));
+< 
+< 	dumpSocketAddr.sin_family = AF_INET;
+< 	dumpSocketAddr.sin_port = htons(4999);
+< 
+< 	if(inet_pton(AF_INET, "127.0.0.1", &dumpSocketAddr.sin_addr)<=0)
+< 	{
+< 		ALOGW("inet_pton error occured");
+< 	}
+<  
+2783,2842c2747
+< 
+<         ssize_t framesWritten = 0;
+< 
+< 		if (dumpSocketWatchDog >= 10){
+< 
+< 			// disable socket dump
+< 			ALOGW("Error : Maximum tries. Disabling socket dump");
+<         	rewind(dumpSwitchFile);
+<         	fprintf (dumpSwitchFile, "%d", 0);
+< 		    clearerr(dumpSwitchFile);
+< 			dumpSwitch = 0;
+< 			dumpSocketWatchDog = 0;
+< 		}else{
+< 		    // read switch state
+< 		    rewind(dumpSwitchFile);
+< 		    fscanf (dumpSwitchFile, "%d", &dumpSwitch);
+< 		    clearerr(dumpSwitchFile);
+< 		}
+< 
+<         if (dumpSwitch == 0) {
+<             if (dumpSocketReady != -1){
+< 				dumpSocketReady = -1;
+< 			}
+<             if (dumpSocket != -1){
+<                	dumpSocket = -1;
+< 			}
+< 			// write to std audio output
+<             framesWritten = mNormalSink->write(mMixBuffer, count);
+<         }
+<         else {
+< 			// try connection to raop bridge
+<             if (dumpSocket < 0){
+< 				if((dumpSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+< 					ALOGW("Error : Could not create socket");
+< 					framesWritten = 0;
+< 					dumpSocketWatchDog++;
+< 				}
+< 				if( (dumpSocketReady = connect(dumpSocket, (struct sockaddr *)&dumpSocketAddr, sizeof(dumpSocketAddr))) < 0){
+< 					ALOGW("Error : Connect Failed");
+< 					framesWritten = 0;
+< 					dumpSocketWatchDog = 10;
+< 				}
+< 			}
+< 
+<             if (dumpSocketReady >= 0){
+< 				int sent = send(dumpSocket,mMixBuffer,count*4,0);
+< 				if (sent < 1)
+< 				{
+< 					ALOGW("Can't write to dump socket %s: \n", strerror(errno));
+< 					framesWritten = 0;
+< 					dumpSocketWatchDog = 10;
+< 				} 
+< 				else {
+< 					dumpSocketWatchDog = 0;
+< 				    framesWritten = sent;
+< 				}
+<             }
+<         }
+< 
+< 
+---
+>         ssize_t framesWritten = mNormalSink->write(mMixBuffer, count);
